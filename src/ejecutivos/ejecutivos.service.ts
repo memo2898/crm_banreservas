@@ -182,10 +182,10 @@ export class EjecutivosService {
     filters: Partial<EjecutivoFiltersDto>
   ) {
     
-    // Filtro por id_ejecutivo
-    if (filters.id_ejecutivo) {
-      queryBuilder.andWhere('ejecutivo.id_ejecutivo = :id_ejecutivo', {
-        id_ejecutivo: filters.id_ejecutivo,
+    // Filtro por ID específico
+    if (filters.id) {
+      queryBuilder.andWhere('ejecutivo.id = :id', {
+        id: filters.id,
       });
     }
 
@@ -245,7 +245,7 @@ export class EjecutivosService {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-                'id_ejecutivo',
+                'id',
         'nombre',
         'apellido',
         'agregado_por',

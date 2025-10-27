@@ -3,8 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 't
 
 @Entity('crm_banco.ejecutivos')
 export class Ejecutivo {
-  @Column({ type: "integer" })
-  id_ejecutivo: number | null;
+  @PrimaryGeneratedColumn()
+  id: number | null;
 
   @Column({ type: "varchar", nullable: false })
   nombre: string;

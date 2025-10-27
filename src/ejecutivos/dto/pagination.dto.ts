@@ -40,12 +40,12 @@ export class EjecutivoFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 1, 
-    description: 'Filtrar por id_ejecutivo' 
+    description: 'Filtrar por ID específico' 
   })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  id_ejecutivo?: number;
+  id?: number;
 
   @ApiPropertyOptional({ 
     example: 'ejemplo', 

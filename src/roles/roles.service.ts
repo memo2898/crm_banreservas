@@ -182,10 +182,10 @@ export class RolesService {
     filters: Partial<RoleFiltersDto>
   ) {
     
-    // Filtro por id_rol
-    if (filters.id_rol) {
-      queryBuilder.andWhere('role.id_rol = :id_rol', {
-        id_rol: filters.id_rol,
+    // Filtro por ID específico
+    if (filters.id) {
+      queryBuilder.andWhere('role.id = :id', {
+        id: filters.id,
       });
     }
 
@@ -245,7 +245,7 @@ export class RolesService {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-                'id_rol',
+                'id',
         'nombre_rol',
         'descripcion',
         'agregado_por',

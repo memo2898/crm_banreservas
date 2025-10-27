@@ -40,12 +40,12 @@ export class RoleFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 1, 
-    description: 'Filtrar por id_rol' 
+    description: 'Filtrar por ID específico' 
   })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  id_rol?: number;
+  id?: number;
 
   @ApiPropertyOptional({ 
     example: 'ejemplo', 

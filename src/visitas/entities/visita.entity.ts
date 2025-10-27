@@ -4,8 +4,8 @@ import { Ejecutivo } from '../../ejecutivos/entities/ejecutivo.entity';
 
 @Entity('crm_banco.visitas')
 export class Visita {
-  @Column({ type: "integer" })
-  id_visita: number | null;
+  @PrimaryGeneratedColumn()
+  id: number | null;
 
   @Column({ type: "integer", nullable: false })
   id_cliente: number;

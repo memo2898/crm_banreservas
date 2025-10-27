@@ -40,12 +40,12 @@ export class ClienteFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 1, 
-    description: 'Filtrar por id_cliente' 
+    description: 'Filtrar por ID específico' 
   })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  id_cliente?: number;
+  id?: number;
 
   @ApiPropertyOptional({ 
     example: 'ejemplo', 

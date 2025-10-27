@@ -248,10 +248,10 @@ export class VentasService {
     filters: Partial<VentaFiltersDto>
   ) {
     
-    // Filtro por id_venta
-    if (filters.id_venta) {
-      queryBuilder.andWhere('venta.id_venta = :id_venta', {
-        id_venta: filters.id_venta,
+    // Filtro por ID específico
+    if (filters.id) {
+      queryBuilder.andWhere('venta.id = :id', {
+        id: filters.id,
       });
     }
 
@@ -325,7 +325,7 @@ export class VentasService {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-                'id_venta',
+                'id',
         'id_cliente',
         'fecha_venta',
         'monto',

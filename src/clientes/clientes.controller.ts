@@ -9,10 +9,17 @@ import {
   Query,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ClienteFiltersDto, PaginationDto } from './dto/pagination.dto';
 import { PaginationResponse } from './interfaces/pagination-response.interface';
 
@@ -30,19 +37,47 @@ export class ClientesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los clientes (sin paginación - para compatibilidad)' })
-  @ApiResponse({ status: 200, description: 'Lista de clientes obtenida exitosamente.' })
+  @ApiOperation({
+    summary:
+      'Obtener todos los clientes (sin paginación - para compatibilidad)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de clientes obtenida exitosamente.',
+  })
   findAll() {
     return this.clientesService.findAll();
   }
 
   @Get('paginated')
-  @ApiOperation({ summary: 'Obtener todos los clientes con paginación y filtros' })
-  @ApiResponse({ status: 200, description: 'Lista paginada de clientes obtenida exitosamente.' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Elementos por página' })
-  @ApiQuery({ name: 'sort', required: false, type: String, description: 'Campo:dirección (ej: name:ASC)' })
-  findAllPaginated(@Query() filters: ClienteFiltersDto): Promise<PaginationResponse<any>> {
+  @ApiOperation({
+    summary: 'Obtener todos los clientes con paginación y filtros',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de clientes obtenida exitosamente.',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Número de página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Elementos por página',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    description: 'Campo:dirección (ej: name:ASC)',
+  })
+  findAllPaginated(
+    @Query() filters: ClienteFiltersDto,
+  ): Promise<PaginationResponse<any>> {
     return this.clientesService.findAllPaginated(filters);
   }
 
@@ -57,12 +92,15 @@ export class ClientesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un cliente' })
-  @ApiResponse({ status: 200, description: 'Cliente actualizado exitosamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cliente actualizado exitosamente.',
+  })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   @ApiParam({ name: 'id', type: 'number', description: 'ID del cliente' })
   update(
-    @Param('id', ParseIntPipe) id: number, 
-    @Body() updateClienteDto: UpdateClienteDto
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateClienteDto: UpdateClienteDto,
   ) {
     return this.clientesService.update(id, updateClienteDto);
   }
@@ -76,9 +114,12 @@ export class ClientesController {
     return this.clientesService.remove(id);
   }
 
-  //? Endpoints para Foreign Keys:
-  
-
-  //? Endpoints paginados para Foreign Keys:
-  
+  @Delete('soft_delete/:id')
+  @ApiOperation({ summary: 'Eliminar un cliente modo SOFT' })
+  @ApiResponse({ status: 200, description: 'Cliente eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID del cliente' })
+  remove_soft(@Param('id', ParseIntPipe) id: number) {
+    return this.clientesService.remove_soft(id);
+  }
 }

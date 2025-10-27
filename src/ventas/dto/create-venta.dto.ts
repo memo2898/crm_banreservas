@@ -1,12 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsNumber, IsNotEmpty, IsDateString, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsDateString, IsString, IsOptional } from 'class-validator';
 
 export class CreateVentaDto {
-  @ApiProperty({ example: 12345 })
-  @IsOptional()
-  @IsNumber()
-  id_venta?: number;
-
   @ApiProperty({ example: 12345 })
   @IsNotEmpty()
   @IsNumber()

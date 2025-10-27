@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { ClienteFiltersDto, PaginationDto } from './dto/pagination.dto';
+import { ClienteFiltersDto } from './dto/pagination.dto';
 import { Cliente } from './entities/cliente.entity';
 import { PaginationResponse } from './interfaces/pagination-response.interface';
 
@@ -79,7 +79,9 @@ export class ClientesService {
   // Actualizar un registro
   async update(id: number, updateClientesDto: UpdateClienteDto) {
     try {
-      const existingRecord = await this.clientesRepository.findOne({ where: { id } });
+      const existingRecord = await this.clientesRepository.findOne({
+        where: { id },
+      });
       if (!existingRecord) {
         throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
       }
@@ -100,7 +102,9 @@ export class ClientesService {
   // Eliminar un registro
   async remove(id: number) {
     try {
-      const existingRecord = await this.clientesRepository.findOne({ where: { id } });
+      const existingRecord = await this.clientesRepository.findOne({
+        where: { id },
+      });
       if (!existingRecord) {
         throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
       }
@@ -111,7 +115,33 @@ export class ClientesService {
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
-        throw error; // Re-lanzar NotFoundException sin modificar
+        throw error;
+      }
+      throw new HttpException(
+        `Error al eliminar el registro: ${this.getErrorMessage(error)}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async remove_soft(id: number) {
+    try {
+      const existingRecord = await this.clientesRepository.findOne({
+        where: { id },
+      });
+      if (!existingRecord) {
+        throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
+      }
+
+      await this.clientesRepository.update(id, {
+        estado: 'deleted',
+      });
+      return {
+        message: `Clientes con ID ${id} eliminado correctamente`,
+      };
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw error;
       }
       throw new HttpException(
         `Error al eliminar el registro: ${this.getErrorMessage(error)}`,
@@ -121,19 +151,19 @@ export class ClientesService {
   }
 
   //? Métodos findBy para Foreign Keys:
-  
 
   //? Filtrado paginado:
 
   // Obtener todos los registros con paginación y filtros
   async findAllPaginated(
-    filters: ClienteFiltersDto
+    filters: ClienteFiltersDto,
   ): Promise<PaginationResponse<Cliente>> {
     try {
       const { page = 1, limit = 10, sort, ...filterParams } = filters;
 
       // Crear query builder
-      const queryBuilder = this.clientesRepository.createQueryBuilder('cliente');
+      const queryBuilder =
+        this.clientesRepository.createQueryBuilder('cliente');
 
       // Aplicar filtros
       this.applyFilters(queryBuilder, filterParams);
@@ -174,18 +204,15 @@ export class ClientesService {
     }
   }
 
-  
-
   // Método helper para aplicar filtros
   private applyFilters(
     queryBuilder: SelectQueryBuilder<Cliente>,
-    filters: Partial<ClienteFiltersDto>
+    filters: Partial<ClienteFiltersDto>,
   ) {
-    
-    // Filtro por id_cliente
-    if (filters.id_cliente) {
-      queryBuilder.andWhere('cliente.id_cliente = :id_cliente', {
-        id_cliente: filters.id_cliente,
+    // Filtro por ID específico
+    if (filters.id) {
+      queryBuilder.andWhere('cliente.id = :id', {
+        id: filters.id,
       });
     }
 
@@ -251,15 +278,17 @@ export class ClientesService {
         estado: `%${filters.estado}%`,
       });
     }
-
   }
 
   // Método helper para aplicar ordenamiento
-  private applySorting(queryBuilder: SelectQueryBuilder<Cliente>, sort?: string) {
+  private applySorting(
+    queryBuilder: SelectQueryBuilder<Cliente>,
+    sort?: string,
+  ) {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-                'id_cliente',
+        'id',
         'nombre',
         'apellido',
         'direccion',
@@ -268,7 +297,7 @@ export class ClientesService {
         'agregado_en',
         'actualizado_por',
         'actualizado_en',
-        'estado'
+        'estado',
       ];
 
       if (
@@ -277,7 +306,7 @@ export class ClientesService {
       ) {
         queryBuilder.orderBy(
           `cliente.${field}`,
-          direction.toUpperCase() as 'ASC' | 'DESC'
+          direction.toUpperCase() as 'ASC' | 'DESC',
         );
       } else {
         // Ordenamiento por defecto

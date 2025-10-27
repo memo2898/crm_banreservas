@@ -19,7 +19,7 @@ import { VentasModule } from './ventas/ventas.module';
       port: +process.env.DB_PORT || 5432,
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_NAME || 'test',
+      database: process.env.DB_DATABASE || 'test',
       //entities: [__dirname + '/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
       //synchronize: process.env.NODE_ENV !== 'production',

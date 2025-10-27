@@ -3,8 +3,8 @@ import { Cliente } from '../../clientes/entities/cliente.entity';
 
 @Entity('crm_banco.ventas')
 export class Venta {
-  @Column({ type: "integer" })
-  id_venta: number | null;
+  @PrimaryGeneratedColumn()
+  id: number | null;
 
   @Column({ type: "integer", nullable: false })
   id_cliente: number;

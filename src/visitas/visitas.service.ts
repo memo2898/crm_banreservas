@@ -314,10 +314,10 @@ export class VisitasService {
     filters: Partial<VisitaFiltersDto>
   ) {
     
-    // Filtro por id_visita
-    if (filters.id_visita) {
-      queryBuilder.andWhere('visita.id_visita = :id_visita', {
-        id_visita: filters.id_visita,
+    // Filtro por ID específico
+    if (filters.id) {
+      queryBuilder.andWhere('visita.id = :id', {
+        id: filters.id,
       });
     }
 
@@ -391,7 +391,7 @@ export class VisitasService {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-                'id_visita',
+                'id',
         'id_cliente',
         'id_ejecutivo',
         'fecha_visita',

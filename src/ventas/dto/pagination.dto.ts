@@ -40,12 +40,12 @@ export class VentaFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 1, 
-    description: 'Filtrar por id_venta' 
+    description: 'Filtrar por ID específico' 
   })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  id_venta?: number;
+  id?: number;
 
   @ApiPropertyOptional({ 
     example: 1, 
