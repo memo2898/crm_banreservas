@@ -7,6 +7,8 @@ import { EjecutivosModule } from './ejecutivos/ejecutivos.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { VisitasModule } from './visitas/visitas.module';
 import { VentasModule } from './ventas/ventas.module';
+import { ProductividadModule } from './productividad/productividad.module';
+import { EtlModule } from './etl/etl.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { VentasModule } from './ventas/ventas.module';
     ClientesModule,
     VisitasModule,
     VentasModule,
+    ProductividadModule,
+    EtlModule,
   ],
   controllers: [],
   providers: [],
