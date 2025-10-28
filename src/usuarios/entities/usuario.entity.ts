@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
 
-@Entity('public.usuarios')
+@Entity('crm_banco.usuarios')
 export class Usuario {
   @PrimaryGeneratedColumn()
   id: number;

@@ -1,0 +1,13 @@
+id_transaccion,nombre,apellido,tipo_documento,documento,fecha_venta,monto,producto
+TX1013,Sofia,Rojas,CED,00123456801,2025-11-12,4125.75,CuentaAhorro
+TX1014,Marcos,Hernandez,CED,00123456802,2025-11-07,3198.60,PrestamoPersonal
+TX1015,Carla,Gomez,CED,00123456803,2025-11-11,5921.20,TarjetaCredito
+TX1016,ConstructoraLaVega,,RNC,402123458,2025-11-05,8240.00,PrestamoComercial
+TX1017,Esteban,Martinez,CED,00123456804,2025-11-08,1380.50,CuentaCorriente
+TX1018,Daniela,Rivera,CED,00123456805,2025-11-14,2765.80,PrestamoHipotecario
+TX1019,Alberto,Perez,CED,00123456806,2025-11-10,4893.10,CuentaAhorro
+TX1020,Lucia,Fernandez,CED,00123456807,2025-11-13,3587.95,TarjetaCredito
+TX1021,GrupoSol,,RNC,402123459,2025-11-09,9120.50,PrestamoComercial
+TX1022,Marcelo,Diaz,CED,00123456808,2025-11-06,2105.40,CuentaCorriente
+TX1023,Camila,Rivera,CED,00123456809,2025-11-15,4750.25,PrestamoPersonal
+TX1024,Felipe,Martinez,CED,00123456810,2025-11-12,6338.60,PrestamoHipotecario

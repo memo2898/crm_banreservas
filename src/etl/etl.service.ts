@@ -14,7 +14,7 @@ import {
   VentaClienteRowDto,
   ETLResultDto,
   ETLOptionsDto,
-  TipoDocumento ,
+  TipoDocumento,
 } from './dto/create-etl.dto';
 
 // Importa las entidades reales
@@ -304,23 +304,5 @@ export class EtlService {
     });
 
     await queryRunner.manager.save(Venta, nuevaVenta);
-  }
-
-  async obtenerEstadisticasETL(): Promise<any> {
-    const ventasHoy = await this.ventaRepository
-      .createQueryBuilder('v')
-      .where('DATE(v.agregado_en) = CURRENT_DATE')
-      .getCount();
-
-    const clientesHoy = await this.clienteRepository
-      .createQueryBuilder('c')
-      .where('DATE(c.agregado_en) = CURRENT_DATE')
-      .getCount();
-
-    return {
-      ventas_hoy: ventasHoy,
-      clientes_hoy: clientesHoy,
-      ultima_actualizacion: new Date(),
-    };
   }
 }
