@@ -32,11 +32,11 @@ Este proyecto implementa una solución integral para la gestión de actividad co
 ### 1.2 Alcance
 
 La solución cubre:
-- ✅ Integración de datos de PostgreSQL y archivos CSV/Excel
-- ✅ Consultas analíticas de productividad
-- ✅ Proceso ETL automatizado con validaciones
-- ✅ API REST para consumo de datos
-- ✅ Reportes parametrizados con KPIs
+-  Integración de datos de PostgreSQL y archivos CSV/Excel
+-  Consultas analíticas de productividad
+-  Proceso ETL automatizado con validaciones
+-  API REST para consumo de datos
+-  Reportes parametrizados con KPIs
 
 ### 1.3 Stack Tecnológico
 
@@ -85,8 +85,8 @@ La solución cubre:
 ### 3.1 Clonar el Repositorio
 
 ```bash
-git clone https://github.com/[tu-usuario]/api-crm-banreservas.git
-cd api-crm-banreservas
+git clone https://github.com/memo2898/crm_banreservas.git
+
 ```
 
 ### 3.2 Instalar Dependencias
@@ -128,9 +128,11 @@ psql -U postgres -d crm_banreservas
 
 **1. Crear Estructura de Tablas** (`db/init.sql`)
 
+
 ```bash
 psql -U postgres -d crm_banreservas -f db/init.sql
 ```
+Manualmente puedes ir a la ruta: db/init.sql y copiar y pegar el codigo
 
 Este script crea todas las tablas:
 - Clientes
@@ -146,6 +148,8 @@ Este script crea todas las tablas:
 ```bash
 psql -U postgres -d crm_banreservas -f db/seeders/seed.sql
 ```
+
+Manualmente puedes ir a la ruta: `db/seeders/seed.sql y copiar y pegar el codigo
 
 Este script carga datos de prueba en todas las tablas.
 
@@ -213,27 +217,33 @@ echo "Base de datos configurada exitosamente"
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-# Base de Datos PostgreSQL
+# ==============================================
+# CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL
+# ==============================================
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
-DB_PASSWORD=tu_password_postgres
+DB_PASSWORD=tucontrasena
 DB_DATABASE=crm_banreservas
 
-# Aplicación
-PORT=3000
-NODE_ENV=development
+# Configuración adicional de TypeORM
+DB_SYNCHRONIZE=false
+DB_LOGGING=false
 
-# JWT
-JWT_SECRET=tu_secret_key_super_segura_aqui_cambiar_en_produccion
+# ==============================================
+# CONFIGURACIÓN DE AUTENTICACIÓN JWT
+# ==============================================
+JWT_SECRET=@@banreservas_crm_prueba_tecnica@@
 JWT_EXPIRES_IN=24h
 
-# Configuraciones adicionales
-CORS_ORIGIN=*
-MAX_FILE_SIZE=5242880
+# ==============================================
+# CONFIGURACIÓN DEL SERVIDOR
+# ==============================================
+PORT=3002
+NODE_ENV=development
 ```
 
-⚠️ **IMPORTANTE:** Cambia `JWT_SECRET` y `DB_PASSWORD` por valores seguros en producción.
+**IMPORTANTE:** Cambia `JWT_SECRET` y `DB_PASSWORD` por valores seguros en producción.
 
 ### 3.5 Iniciar el Backend (NestJS)
 
@@ -269,24 +279,26 @@ Esto genera la carpeta `dist/` con el código JavaScript compilado.
 **Modo Desarrollo (Recomendado para pruebas):**
 
 ```bash
-npm run start:dev
+nest start --watch
 ```
 
 **Características del modo desarrollo:**
-- ✅ Auto-reload cuando cambias código
-- ✅ Logs detallados en consola
-- ✅ Muestra errores completos con stack trace
-- ✅ No requiere compilación manual
+-  Auto-reload cuando cambias código
+-  Logs detallados en consola
+-  Muestra errores completos con stack trace
+-  No requiere compilación manual
 
 **Salida esperada:**
 ```
-[Nest] 12345  - 27/10/2024, 10:30:00   LOG [NestFactory] Starting Nest application...
-[Nest] 12345  - 27/10/2024, 10:30:01   LOG [InstanceLoader] AppModule dependencies initialized
-[Nest] 12345  - 27/10/2024, 10:30:01   LOG [InstanceLoader] TypeOrmModule dependencies initialized
-[Nest] 12345  - 27/10/2024, 10:30:02   LOG [RoutesResolver] AppController {/}:
-[Nest] 12345  - 27/10/2024, 10:30:02   LOG [RouterExplorer] Mapped {/, GET} route
-[Nest] 12345  - 27/10/2024, 10:30:02   LOG [NestApplication] Nest application successfully started
-[Nest] 12345  - 27/10/2024, 10:30:02   LOG Application is running on: http://localhost:3000
+[Nest] 21574  - 10/27/2025, 10:39:29 PM     LOG [RouterExplorer] Mapped {/api/tipo-documentos/:id, GET} route +0ms
+[Nest] 21574  - 10/27/2025, 10:39:29 PM     LOG [RouterExplorer] Mapped {/api/tipo-documentos/:id, PATCH} route +0ms
+[Nest] 21574  - 10/27/2025, 10:39:29 PM     LOG [RouterExplorer] Mapped {/api/tipo-documentos/:id, DELETE} route +0ms
+[Nest] 21574  - 10/27/2025, 10:39:29 PM     LOG [NestApplication] Nest application successfully started +3ms
+Aplicación ejecutándose en: http://[::1]:3002
+Documentación Swagger UI: http://[::1]:3002/api
+Swagger JSON: http://[::1]:3002/api/docs-json/swagger.json
+Swagger YAML: http://[::1]:3002/api/docs-json/swagger.yaml
+
 ```
 
 **Modo Producción:**
@@ -311,22 +323,16 @@ Una vez iniciado, verifica en tu navegador o con curl:
 
 **1. Health Check:**
 ```bash
-curl http://localhost:3000
+curl http://localhost:3002/api
 ```
 
-**Respuesta esperada:**
-```json
-{
-  "message": "CRM BanReservas API está funcionando",
-  "version": "1.0.0"
-}
-```
+
 
 **2. Documentación Swagger:**
 
 Abre en tu navegador:
 ```
-http://localhost:3000/api
+http://localhost:3002/api
 ```
 
 Deberías ver la interfaz de Swagger con todos los endpoints documentados.
@@ -346,11 +352,11 @@ Si hay error de conexión, verás:
 #### 3.5.5 Estructura de Logs
 
 El backend mostrará logs de:
-- 🟢 **Inicialización** de módulos
-- 🔵 **Rutas** registradas
-- 🟡 **Peticiones** HTTP entrantes
-- 🔴 **Errores** si ocurren
-- 🟢 **Conexión** a base de datos
+-  **Inicialización** de módulos
+-  **Rutas** registradas
+-  **Peticiones** HTTP entrantes
+-  **Errores** si ocurren
+-  **Conexión** a base de datos
 
 #### 3.5.6 Detener el Backend
 
@@ -363,20 +369,14 @@ Una vez iniciada la aplicación, verifica:
 
 1. **API funcionando:**
    ```
-   http://localhost:3000
+   http://localhost:3002
    ```
 
 2. **Documentación Swagger:**
    ```
-   http://localhost:3000/api
+   http://localhost:3002/api
    ```
 
-3. **Health Check:**
-   ```bash
-   curl http://localhost:3000/
-   ```
-
----
 
 ## 4. Arquitectura de la Solución
 
@@ -500,61 +500,210 @@ La consulta realiza:
 #### 5.1.2 Stored Procedure
 
 ```sql
-CREATE PROCEDURE sp_ObtenerProductividadEjecutivos
-    @FechaInicio DATE = NULL,
-    @FechaFin DATE = NULL
-AS
+
+CREATE OR REPLACE FUNCTION crm_banco.sp_analizar_productividad_ejecutivo(
+    p_fecha_inicio DATE DEFAULT NULL,
+    p_fecha_fin DATE DEFAULT NULL,
+    p_id_ejecutivo INTEGER DEFAULT NULL,
+    p_estado VARCHAR DEFAULT 'activo'
+)
+RETURNS TABLE (
+    id_ejecutivo INTEGER,
+    nombre_ejecutivo VARCHAR,
+    apellido_ejecutivo VARCHAR,
+    total_visitas BIGINT,
+    visitas_exitosas BIGINT,
+    tasa_exito_visitas NUMERIC,
+    total_clientes_visitados BIGINT,
+    promedio_visitas_por_cliente NUMERIC,
+    total_ventas_relacionadas BIGINT,
+    monto_total_ventas NUMERIC,
+    monto_promedio_venta NUMERIC,
+    tasa_conversion_visita_venta NUMERIC,
+    efectividad_ejecutivo NUMERIC,
+    dias_activo INTEGER,
+    promedio_visitas_diarias NUMERIC,
+    periodo_analisis TEXT
+) 
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_fecha_inicio DATE;
+    v_fecha_fin DATE;
 BEGIN
-    SET NOCOUNT ON;
+
+    v_fecha_inicio := COALESCE(p_fecha_inicio, CURRENT_DATE - INTERVAL '30 days');
+    v_fecha_fin := COALESCE(p_fecha_fin, CURRENT_DATE);
+    
+    RETURN QUERY
+    WITH visitas_ejecutivo AS (
+
+        SELECT 
+            e.id AS id_ejecutivo,
+            e.nombre,
+            e.apellido,
+            v.id AS id_visita,
+            v.id_cliente,
+            v.fecha_visita,
+            v.resultado,
+            CASE 
+                WHEN LOWER(v.resultado) LIKE '%exitosa%' 
+                  OR LOWER(v.resultado) LIKE '%positiv%'
+                  OR LOWER(v.resultado) LIKE '%venta%'
+                THEN 1 
+                ELSE 0 
+            END AS visita_exitosa
+        FROM crm_banco.ejecutivos e
+        LEFT JOIN crm_banco.visitas v ON e.id = v.id_ejecutivo
+            AND v.fecha_visita::DATE BETWEEN v_fecha_inicio AND v_fecha_fin
+            AND v.estado = p_estado
+        WHERE e.estado = p_estado
+            AND (p_id_ejecutivo IS NULL OR e.id = p_id_ejecutivo)
+    ),
+    ventas_periodo AS (
+
+        SELECT 
+            ve.id_ejecutivo,
+            vt.id AS id_venta,
+            vt.id_cliente,
+            vt.monto,
+            vt.fecha_venta,
+            vt.producto
+        FROM visitas_ejecutivo ve
+        INNER JOIN crm_banco.ventas vt ON ve.id_cliente = vt.id_cliente
+            AND vt.fecha_venta::DATE BETWEEN v_fecha_inicio AND v_fecha_fin
+            AND vt.estado = p_estado
+        WHERE ve.id_visita IS NOT NULL
+    ),
+    metricas_agregadas AS (
+        
+        SELECT 
+            ve.id_ejecutivo,
+            ve.nombre,
+            ve.apellido,
+            COUNT(DISTINCT ve.id_visita) AS total_visitas,
+            SUM(ve.visita_exitosa) AS visitas_exitosas,
+            COUNT(DISTINCT ve.id_cliente) AS total_clientes_visitados,
+            COUNT(DISTINCT vp.id_venta) AS total_ventas_relacionadas,
+            COALESCE(SUM(vp.monto), 0) AS monto_total_ventas,
+            (v_fecha_fin - v_fecha_inicio + 1) AS dias_periodo
+        FROM visitas_ejecutivo ve
+        LEFT JOIN ventas_periodo vp ON ve.id_ejecutivo = vp.id_ejecutivo
+        GROUP BY ve.id_ejecutivo, ve.nombre, ve.apellido
+    )
 
     SELECT 
-        E.IdEjecutivo,
-        E.Nombre + ' ' + E.Apellido AS NombreEjecutivo,
-        COUNT(DISTINCT V.IdVisita) AS TotalVisitas,
-        COUNT(DISTINCT VT.IdVenta) AS TotalVentas,
-        ISNULL(SUM(VT.Monto), 0) AS MontoTotalVentas,
+        ma.id_ejecutivo::INTEGER,
+        ma.nombre::VARCHAR,
+        ma.apellido::VARCHAR,
+        ma.total_visitas::BIGINT,
+        ma.visitas_exitosas::BIGINT,
         CASE 
-            WHEN COUNT(DISTINCT V.IdVisita) > 0 
-            THEN CAST(COUNT(DISTINCT VT.IdVenta) AS FLOAT) / COUNT(DISTINCT V.IdVisita) * 100
+            WHEN ma.total_visitas > 0 
+            THEN ROUND((ma.visitas_exitosas::NUMERIC / ma.total_visitas) * 100, 2)
             ELSE 0 
-        END AS TasaConversion,
+        END AS tasa_exito_visitas,
+        ma.total_clientes_visitados::BIGINT,
         CASE 
-            WHEN COUNT(DISTINCT VT.IdVenta) > 0 
-            THEN SUM(VT.Monto) / COUNT(DISTINCT VT.IdVenta)
+            WHEN ma.total_clientes_visitados > 0 
+            THEN ROUND(ma.total_visitas::NUMERIC / ma.total_clientes_visitados, 2)
             ELSE 0 
-        END AS TicketPromedio
-    FROM 
-        Ejecutivos E
-    LEFT JOIN 
-        Visitas V ON E.IdEjecutivo = V.IdEjecutivo
-    LEFT JOIN 
-        Ventas VT ON V.IdCliente = VT.IdCliente 
-        AND VT.FechaVenta >= V.FechaVisita
-        AND VT.FechaVenta <= DATEADD(DAY, 30, V.FechaVisita)
-    WHERE 
-        (@FechaInicio IS NULL OR V.FechaVisita >= @FechaInicio)
-        AND (@FechaFin IS NULL OR V.FechaVisita <= @FechaFin)
-    GROUP BY 
-        E.IdEjecutivo, E.Nombre, E.Apellido
-    ORDER BY 
-        MontoTotalVentas DESC;
+        END AS promedio_visitas_por_cliente,
+        ma.total_ventas_relacionadas::BIGINT,
+        ROUND(ma.monto_total_ventas, 2) AS monto_total_ventas,
+        CASE 
+            WHEN ma.total_ventas_relacionadas > 0 
+            THEN ROUND(ma.monto_total_ventas / ma.total_ventas_relacionadas, 2)
+            ELSE 0 
+        END AS monto_promedio_venta,
+        CASE 
+            WHEN ma.total_visitas > 0 
+            THEN ROUND((ma.total_ventas_relacionadas::NUMERIC / ma.total_visitas) * 100, 2)
+            ELSE 0 
+        END AS tasa_conversion_visita_venta,
+        CASE 
+            WHEN ma.total_visitas > 0 
+            THEN ROUND(
+                (
+                    (ma.visitas_exitosas::NUMERIC / ma.total_visitas * 0.3) +
+                    (ma.total_ventas_relacionadas::NUMERIC / NULLIF(ma.total_visitas, 0) * 0.4) +
+                    (LEAST(ma.monto_total_ventas / 100000, 1) * 0.3)
+                ) * 100, 2
+            )
+            ELSE 0 
+        END AS efectividad_ejecutivo,
+        ma.dias_periodo::INTEGER AS dias_activo,
+        CASE 
+            WHEN ma.dias_periodo > 0 
+            THEN ROUND(ma.total_visitas::NUMERIC / ma.dias_periodo, 2)
+            ELSE 0 
+        END AS promedio_visitas_diarias,
+        FORMAT('%s al %s', v_fecha_inicio, v_fecha_fin)::TEXT AS periodo_analisis
+    FROM metricas_agregadas ma
+    ORDER BY ma.monto_total_ventas DESC, ma.total_visitas DESC;
 END;
-GO
+$$;
+
+
+CREATE OR REPLACE FUNCTION crm_banco.sp_productividad_ejecutivo_simple(
+    p_id_ejecutivo INTEGER DEFAULT NULL
+)
+RETURNS TABLE (
+    id_ejecutivo INTEGER,
+    nombre_completo TEXT,
+    total_visitas BIGINT,
+    total_clientes BIGINT,
+    total_ventas NUMERIC,
+    efectividad_porcentaje NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        e.id AS id_ejecutivo,
+        CONCAT(e.nombre, ' ', e.apellido) AS nombre_completo,
+        COUNT(DISTINCT v.id) AS total_visitas,
+        COUNT(DISTINCT v.id_cliente) AS total_clientes,
+        COALESCE(SUM(vt.monto), 0) AS total_ventas,
+        CASE 
+            WHEN COUNT(DISTINCT v.id) > 0 
+            THEN ROUND(
+                (COUNT(DISTINCT vt.id)::NUMERIC / COUNT(DISTINCT v.id)) * 100, 
+                2
+            )
+            ELSE 0 
+        END AS efectividad_porcentaje
+    FROM crm_banco.ejecutivos e
+    LEFT JOIN crm_banco.visitas v ON e.id = v.id_ejecutivo
+        AND v.estado = 'activo'
+    LEFT JOIN crm_banco.ventas vt ON v.id_cliente = vt.id_cliente
+        AND vt.fecha_venta >= v.fecha_visita
+        AND vt.estado = 'activo'
+    WHERE e.estado = 'activo'
+        AND (p_id_ejecutivo IS NULL OR e.id = p_id_ejecutivo)
+    GROUP BY e.id, e.nombre, e.apellido
+    ORDER BY total_ventas DESC;
+END;
+$$;
+
+
 ```
 
 #### 5.1.3 Ejecutar la Consulta
 
-**Método 1: Desde SQL Server Management Studio**
+**Método 1: Desde PostgreSQL Management Studio**
 
-```sql
--- Sin parámetros (todos los registros)
-EXEC sp_ObtenerProductividadEjecutivos;
 
--- Con rango de fechas
-EXEC sp_ObtenerProductividadEjecutivos 
-    @FechaInicio = '2024-01-01', 
-    @FechaFin = '2024-12-31';
-```
+-- Productividad de todos los ejecutivos en los últimos 30 días
+-- SELECT * FROM crm_banco.sp_analizar_productividad_ejecutivo();
+
+-- Productividad de un ejecutivo específico en un rango de fechas
+-- SELECT * FROM crm_banco.sp_analizar_productividad_ejecutivo('2024-01-01', '2024-12-31', 1);
+
+-- Vista simplificada
+-- SELECT * FROM crm_banco.sp_productividad_ejecutivo_simple();
+
 
 **Método 2: Desde la API (ver sección 8.4)**
 
@@ -574,12 +723,12 @@ EXEC sp_ObtenerProductividadEjecutivos
 El proceso ETL (Extract, Transform, Load) permite cargar archivos CSV/Excel con ventas de sistemas externos al CRM.
 
 **Características:**
-- ✅ Validación de estructura del archivo
-- ✅ Detección de registros duplicados
-- ✅ Validación de datos (fechas, montos, referencias foráneas)
-- ✅ Manejo de errores con reporte detallado
-- ✅ Transacciones seguras (rollback en caso de error)
-- ✅ Registro de auditoría
+-  Validación de estructura del archivo
+-  Detección de registros duplicados
+-  Validación de datos (fechas, montos, referencias foráneas)
+-  Manejo de errores con reporte detallado
+-  Transacciones seguras (rollback en caso de error)
+-  Registro de auditoría
 
 ### 6.2 Formato del Archivo CSV
 
@@ -709,22 +858,22 @@ Si hay errores críticos, la transacción se revierte completamente:
 
 #### 6.5.1 Validaciones de Estructura
 
-- ✅ Archivo debe ser CSV o Excel (.csv, .xlsx)
-- ✅ Debe contener las columnas requeridas
-- ✅ Tamaño máximo: 5 MB
+-  Archivo debe ser CSV o Excel (.csv, .xlsx)
+-  Debe contener las columnas requeridas
+-  Tamaño máximo: 5 MB
 
 #### 6.5.2 Validaciones de Datos
 
-- ✅ **IdCliente:** Debe existir en la tabla Clientes
-- ✅ **FechaVenta:** 
+-  **IdCliente:** Debe existir en la tabla Clientes
+-  **FechaVenta:** 
   - Formato válido (YYYY-MM-DD)
   - No puede ser fecha futura
   - No puede ser anterior al año 2000
-- ✅ **Monto:** 
+-  **Monto:** 
   - Debe ser numérico
   - Mayor a 0
   - Máximo 2 decimales
-- ✅ **Producto:** 
+-  **Producto:** 
   - No puede estar vacío
   - Máximo 100 caracteres
 
@@ -979,13 +1128,13 @@ GET /reportes/dashboard?formato=xlsx
 API RESTful desarrollada con NestJS que expone todos los módulos del CRM.
 
 **Características:**
-- ✅ Arquitectura modular
-- ✅ Autenticación JWT
-- ✅ Validación de datos con class-validator
-- ✅ Documentación automática con Swagger
-- ✅ Paginación en listados
-- ✅ Manejo de errores centralizado
-- ✅ CORS habilitado
+-  Arquitectura modular
+-  Autenticación JWT
+-  Validación de datos con class-validator
+-  Documentación automática con Swagger
+-  Paginación en listados
+-  Manejo de errores centralizado
+-  CORS habilitado
 
 ### 8.2 Autenticación
 
@@ -1238,7 +1387,7 @@ Dashboard interactivo en Power BI que visualiza tendencias y comparativas de la 
 ### 9.2 Requisitos
 
 - Power BI Desktop (versión más reciente)
-- Conexión a SQL Server
+- Conexión a PostgreSQL
 - Credenciales de base de datos
 
 ### 9.3 Configuración del Dashboard
@@ -1256,7 +1405,7 @@ Dashboard interactivo en Power BI que visualiza tendencias y comparativas de la 
 Si es la primera vez:
 
 1. En Power BI, ve a: **Home > Transform data > Data source settings**
-2. Selecciona la conexión SQL Server
+2. Selecciona la conexión PostgreSQL
 3. Click en "Change Source..."
 4. Actualiza:
    - Server: `localhost` (o tu servidor)
@@ -1496,10 +1645,10 @@ Error: Connection failed: ECONNREFUSED
 ```
 
 **Soluciones:**
-1. Verifica que SQL Server esté corriendo:
+1. Verifica que PostgreSQL esté corriendo:
    ```bash
    # Windows
-   services.msc > SQL Server (MSSQLSERVER)
+   services.msc > PostgreSQL (MSSQLSERVER)
    
    # Linux
    sudo systemctl status mssql-server
@@ -1611,7 +1760,7 @@ npm install
 - Mensaje de error al refrescar
 
 **Soluciones:**
-1. Verifica la conexión a SQL Server
+1. Verifica la conexión a PostgreSQL
 2. Actualiza credenciales:
    ```
    Home > Transform data > Data source settings > Edit Permissions
@@ -1933,12 +2082,12 @@ npm install
 **Documentación Técnica:**
 - [NestJS Documentation](https://docs.nestjs.com)
 - [TypeORM Documentation](https://typeorm.io)
-- [SQL Server Documentation](https://docs.microsoft.com/sql)
+- [PostgreSQL Documentation](https://docs.microsoft.com/sql)
 - [Power BI Documentation](https://docs.microsoft.com/power-bi)
 
 **Tutoriales:**
 - [Building REST APIs with NestJS](https://www.youtube.com/nestjs-tutorial)
-- [SQL Server Basics](https://www.sqlservertutorial.net)
+- [PostgreSQL Basics](https://www.sqlservertutorial.net)
 - [Power BI for Beginners](https://powerbi.microsoft.com/learning)
 
 **Herramientas Recomendadas:**
@@ -1961,15 +2110,15 @@ Este manual proporciona toda la información necesaria para instalar, configurar
 
 ### 13.1 Resumen de la Solución
 
-✅ **Parte 1:** Consulta SQL implementada en stored procedure `sp_ObtenerProductividadEjecutivos`
+ **Parte 1:** Consulta SQL implementada en stored procedure `sp_ObtenerProductividadEjecutivos`
 
-✅ **Parte 2:** Proceso ETL completo con validaciones en endpoint `/etl/cargar-ventas`
+ **Parte 2:** Proceso ETL completo con validaciones en endpoint `/etl/cargar-ventas`
 
-✅ **Parte 3:** Reportes parametrizados con 6 KPIs principales en módulo `/reportes`
+ **Parte 3:** Reportes parametrizados con 6 KPIs principales en módulo `/reportes`
 
-✅ **Parte 4:** API REST completa con NestJS, documentada con Swagger
+ **Parte 4:** API REST completa con NestJS, documentada con Swagger
 
-✅ **Parte 5:** Dashboard Power BI con 4 páginas de análisis interactivo
+ **Parte 5:** Dashboard Power BI con 4 páginas de análisis interactivo
 
 ### 13.2 Próximos Pasos
 
