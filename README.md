@@ -14,12 +14,11 @@
 3. [Instalación y Configuración](#3-instalación-y-configuración)
 4. [Arquitectura de la Solución](#4-arquitectura-de-la-solución)
 5. [Parte 1: Consultas SQL](#5-parte-1-consultas-sql)
-6. [Parte 2: Proceso ETL](#6-parte-2-proceso-etl)
+6. [Parte 2: Proceso ETL](#6-parte-2-proceso-etl)◊
 7. [Parte 3: Reportes y KPIs](#7-parte-3-reportes-y-kpis)
 8. [Parte 4: API REST](#8-parte-4-api-rest)
-9. [Pruebas y Validación](#9-pruebas-y-validación)
-10. [Solución de Problemas](#10-solución-de-problemas)
-11. [Anexos](#11-anexos)
+9. [Anexos](#9-anexos)
+10. [Conclusión](#10-Conclusión)
 
 ---
 
@@ -886,22 +885,6 @@ GET /reportes/dashboard?fechaInicio=2024-01-01&fechaFin=2024-12-31
 
 **Respuesta:**
 
-```json
-{
-  "periodo": {
-    "inicio": "2024-01-01",
-    "fin": "2024-12-31"
-  },
-  "kpis": {
-    "totalVisitas": 1247,
-    "totalVentas": 892,
-    "montoTotal": 45678900.50,
-    "ticketPromedio": 51211.32,
-    "tasaConversion": 71.53,
-    "clientesActivos": 634
-  }
-}
-```
 
 #### 7.2.2 Ventas por Ejecutivo
 
@@ -1329,503 +1312,10 @@ La documentación Swagger proporciona:
 
 ---
 
-## 9. Parte 5: Visualización Power BI
 
-### 9.1 Descripción
+## 9. Anexos
 
-Dashboard interactivo en Power BI que visualiza tendencias y comparativas de la actividad comercial.
-
-### 9.2 Requisitos
-
-- Power BI Desktop (versión más reciente)
-- Conexión a PostgreSQL
-- Credenciales de base de datos
-
-### 9.3 Configuración del Dashboard
-
-#### 9.3.1 Abrir el Archivo
-
-**Ubicación:** `powerbi/Dashboard_CRM_BanReservas.pbix`
-
-1. Abre Power BI Desktop
-2. File > Open
-3. Selecciona `Dashboard_CRM_BanReservas.pbix`
-
-#### 9.3.2 Configurar Conexión a Datos
-
-Si es la primera vez:
-
-1. En Power BI, ve a: **Home > Transform data > Data source settings**
-2. Selecciona la conexión PostgreSQL
-3. Click en "Change Source..."
-4. Actualiza:
-   - Server: `localhost` (o tu servidor)
-   - Database: `CRM_BanReservas`
-5. Click OK
-6. Ingresa credenciales cuando se solicite
-7. Click en "Refresh"
-
-### 9.4 Páginas del Dashboard
-
-#### 9.4.1 Página 1: Overview General
-
-**Visualizaciones:**
-- 📊 Tarjetas de KPIs principales
-  - Total Visitas
-  - Total Ventas
-  - Monto Total Vendido
-  - Tasa de Conversión
-- 📈 Gráfico de línea: Tendencia mensual de ventas
-- 📊 Gráfico de barras: Top 10 productos más vendidos
-- 🥧 Gráfico circular: Distribución de ventas por producto
-
-#### 9.4.2 Página 2: Análisis por Ejecutivo
-
-**Visualizaciones:**
-- 📊 Tabla: Productividad por ejecutivo
-  - Visitas, Ventas, Monto, Conversión
-- 📊 Gráfico de barras apiladas: Comparativa de ejecutivos
-- 📈 Gráfico de área: Evolución mensual por ejecutivo
-- 🎯 Gauge: Cumplimiento de metas
-
-**Filtros Disponibles:**
-- Rango de fechas
-- Ejecutivo específico
-- Tipo de producto
-
-#### 9.4.3 Página 3: Análisis por Cliente
-
-**Visualizaciones:**
-- 📊 Tabla: Top clientes por monto
-- 🗺️ Mapa: Distribución geográfica de clientes
-- 📊 Gráfico de dispersión: Relación visitas vs ventas
-- 📊 Histograma: Distribución de tickets de venta
-
-#### 9.4.4 Página 4: Tendencias y Comparativas
-
-**Visualizaciones:**
-- 📈 Gráfico de líneas múltiples: Comparativa año sobre año
-- 📊 Matriz: Heatmap de ventas por mes y ejecutivo
-- 📊 Waterfall: Descomposición del crecimiento de ventas
-- 📊 KPI: Crecimiento % vs periodo anterior
-
-### 9.5 Interactividad
-
-**Filtros Globales:**
-- 📅 Rango de fechas
-- 👤 Ejecutivo
-- 📦 Producto
-- 👥 Cliente
-
-**Cross-filtering:**
-- Click en cualquier elemento para filtrar los demás visuales
-- Ctrl+Click para selección múltiple
-
-### 9.6 Actualización de Datos
-
-#### 9.6.1 Manual
-
-```
-Home > Refresh
-```
-
-#### 9.6.2 Automática (Power BI Service)
-
-1. Publica el dashboard al servicio de Power BI
-2. Configura el gateway de datos
-3. Programa actualizaciones automáticas
-
-### 9.7 Exportar Dashboard
-
-**PDF:**
-```
-File > Export > Export to PDF
-```
-
-**PowerPoint:**
-```
-File > Export > Export to PowerPoint
-```
-
-**Publicar al Servicio:**
-```
-Home > Publish > Select workspace
-```
-
----
-
-## 10. Pruebas y Validación
-
-### 10.1 Pruebas de la Base de Datos
-
-#### 10.1.1 Verificar Tablas Creadas
-
-```sql
--- Listar todas las tablas
-SELECT TABLE_NAME 
-FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_TYPE = 'BASE TABLE'
-ORDER BY TABLE_NAME;
-
--- Verificar datos de prueba
-SELECT COUNT(*) AS TotalClientes FROM Clientes;
-SELECT COUNT(*) AS TotalEjecutivos FROM Ejecutivos;
-SELECT COUNT(*) AS TotalVisitas FROM Visitas;
-SELECT COUNT(*) AS TotalVentas FROM Ventas;
-```
-
-#### 10.1.2 Probar Stored Procedures
-
-```sql
--- Probar procedimiento de productividad
-EXEC sp_ObtenerProductividadEjecutivos;
-
--- Probar con parámetros
-EXEC sp_ObtenerProductividadEjecutivos 
-    @FechaInicio = '2024-01-01', 
-    @FechaFin = '2024-12-31';
-```
-
-### 10.2 Pruebas de la API
-
-#### 10.2.1 Health Check
-
-```bash
-curl http://localhost:3000
-```
-
-**Respuesta esperada:**
-```json
-{
-  "message": "CRM BanReservas API está funcionando correctamente",
-  "version": "1.0.0",
-  "timestamp": "2024-10-27T14:30:00.000Z"
-}
-```
-
-#### 10.2.2 Flujo Completo de Prueba
-
-**1. Autenticación**
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"Admin123!"}'
-```
-
-**2. Listar Clientes**
-```bash
-curl -X GET http://localhost:3000/clientes?page=1&limit=5 \
-  -H "Authorization: Bearer TOKEN_AQUI"
-```
-
-**3. Obtener Productividad**
-```bash
-curl -X GET "http://localhost:3000/productividad?fechaInicio=2024-01-01" \
-  -H "Authorization: Bearer TOKEN_AQUI"
-```
-
-**4. Cargar CSV**
-```bash
-curl -X POST http://localhost:3000/etl/cargar-ventas \
-  -H "Authorization: Bearer TOKEN_AQUI" \
-  -F "file=@excel_csv/ventas_otro_sistema.csv"
-```
-
-**5. Obtener Dashboard**
-```bash
-curl -X GET "http://localhost:3000/reportes/dashboard" \
-  -H "Authorization: Bearer TOKEN_AQUI"
-```
-
-### 10.3 Suite de Pruebas Automatizadas
-
-#### 10.3.1 Ejecutar Pruebas Unitarias
-
-```bash
-npm run test
-```
-
-#### 10.3.2 Ejecutar Pruebas E2E
-
-```bash
-npm run test:e2e
-```
-
-#### 10.3.3 Cobertura de Código
-
-```bash
-npm run test:cov
-```
-
-### 10.4 Casos de Prueba del ETL
-
-| Caso | Archivo | Resultado Esperado |
-|------|---------|-------------------|
-| CSV Válido | `ventas_otro_sistema.csv` | Todos los registros insertados |
-| CSV con Duplicados | `ventas_duplicadas.csv` | Duplicados rechazados |
-| CSV con Errores | `ventas_invalidas.csv` | Errores reportados, ningún registro insertado |
-| Cliente Inexistente | `ventas_cliente_invalido.csv` | Error de validación |
-| Fechas Futuras | `ventas_fecha_invalida.csv` | Error de validación |
-
-### 10.5 Checklist de Validación
-
-Antes de entregar, verifica:
-
-- [ ] Base de datos creada correctamente
-- [ ] Datos de prueba cargados
-- [ ] API inicia sin errores
-- [ ] Documentación Swagger accesible
-- [ ] Autenticación funciona
-- [ ] Todos los endpoints responden
-- [ ] Proceso ETL carga archivos CSV
-- [ ] Stored procedures ejecutan correctamente
-- [ ] Dashboard Power BI abre y muestra datos
-- [ ] README.md está completo
-
----
-
-## 11. Solución de Problemas
-
-### 11.1 Problemas Comunes de Instalación
-
-#### 11.1.1 Error: "Cannot connect to database"
-
-**Síntomas:**
-```
-Error: Connection failed: ECONNREFUSED
-```
-
-**Soluciones:**
-1. Verifica que PostgreSQL esté corriendo:
-   ```bash
-   # Windows
-   services.msc > PostgreSQL (MSSQLSERVER)
-   
-   # Linux
-   sudo systemctl status mssql-server
-   ```
-
-2. Verifica las credenciales en `.env`:
-   ```env
-   DB_HOST=localhost
-   DB_PORT=1433
-   DB_USERNAME=sa
-   DB_PASSWORD=TuPasswordAqui
-   ```
-
-3. Verifica que el puerto 1433 esté abierto:
-   ```bash
-   telnet localhost 1433
-   ```
-
-#### 11.1.2 Error: "Port 3000 already in use"
-
-**Síntomas:**
-```
-Error: listen EADDRINUSE: address already in use :::3000
-```
-
-**Soluciones:**
-1. Cambia el puerto en `.env`:
-   ```env
-   PORT=3001
-   ```
-
-2. O detén el proceso que usa el puerto:
-   ```bash
-   # Windows
-   netstat -ano | findstr :3000
-   taskkill /PID [PID_NUMBER] /F
-   
-   # Linux/Mac
-   lsof -i :3000
-   kill -9 [PID]
-   ```
-
-#### 11.1.3 Error: "Module not found"
-
-**Síntomas:**
-```
-Error: Cannot find module '@nestjs/core'
-```
-
-**Solución:**
-```bash
-# Borra node_modules y reinstala
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### 11.2 Problemas con el ETL
-
-#### 11.2.1 Error: "File format not supported"
-
-**Síntomas:**
-```json
-{
-  "error": "Formato de archivo no soportado"
-}
-```
-
-**Solución:**
-- Asegúrate de que el archivo sea CSV o XLSX
-- Verifica que el archivo no esté corrupto
-- Abre el CSV en un editor de texto para verificar el formato
-
-#### 11.2.2 Error: "Missing required columns"
-
-**Síntomas:**
-```json
-{
-  "error": "El archivo debe contener: IdCliente, FechaVenta, Monto, Producto"
-}
-```
-
-**Solución:**
-- Verifica que el CSV tenga exactamente estas columnas
-- Los nombres deben coincidir exactamente (case-sensitive)
-- La primera fila debe ser el encabezado
-
-#### 11.2.3 Archivo CSV muy grande
-
-**Síntomas:**
-```json
-{
-  "error": "File too large"
-}
-```
-
-**Solución:**
-1. Divide el archivo en partes más pequeñas
-2. O aumenta el límite en `.env`:
-   ```env
-   MAX_FILE_SIZE=10485760  # 10 MB
-   ```
-
-### 11.3 Problemas con Power BI
-
-#### 11.3.1 Error: "Cannot refresh data"
-
-**Síntomas:**
-- Dashboard muestra datos antiguos
-- Mensaje de error al refrescar
-
-**Soluciones:**
-1. Verifica la conexión a PostgreSQL
-2. Actualiza credenciales:
-   ```
-   Home > Transform data > Data source settings > Edit Permissions
-   ```
-
-3. Verifica que la base de datos tenga datos:
-   ```sql
-   SELECT COUNT(*) FROM Ventas;
-   ```
-
-#### 11.3.2 Visuales no se Actualizan
-
-**Solución:**
-```
-1. Click en visual > Visualizations pane
-2. Verifica que los campos estén correctamente mapeados
-3. Remove y vuelve a agregar los campos
-```
-
-### 11.4 Problemas de Autenticación
-
-#### 11.4.1 Token Expirado
-
-**Síntomas:**
-```json
-{
-  "statusCode": 401,
-  "message": "Unauthorized"
-}
-```
-
-**Solución:**
-- Genera un nuevo token haciendo login nuevamente
-- Verifica la configuración de expiración en `.env`:
-  ```env
-  JWT_EXPIRES_IN=24h
-  ```
-
-#### 11.4.2 Usuario o Contraseña Incorrectos
-
-**Credenciales por defecto:**
-```
-Username: admin
-Password: Admin123!
-```
-
-Para crear nuevos usuarios:
-```sql
-INSERT INTO Usuarios (Username, Email, Password, IdRol)
-VALUES ('nuevo_usuario', 'email@example.com', 'Password123!', 1);
-```
-
-### 11.5 Logs y Debugging
-
-#### 11.5.1 Ver Logs de la Aplicación
-
-**Modo desarrollo:**
-```bash
-npm run start:dev
-# Los logs aparecen en la consola
-```
-
-**Modo producción:**
-```bash
-# Logs se guardan en archivos
-tail -f logs/application.log
-```
-
-#### 11.5.2 Nivel de Logging
-
-Ajusta el nivel en `.env`:
-```env
-LOG_LEVEL=debug  # debug, info, warn, error
-```
-
-#### 11.5.3 Debugging en VSCode
-
-Crea `.vscode/launch.json`:
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug NestJS",
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/main.ts"],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "console": "integratedTerminal"
-    }
-  ]
-}
-```
-
-### 11.6 Soporte y Recursos
-
-**Documentación Oficial:**
-- NestJS: https://docs.nestjs.com
-- TypeORM: https://typeorm.io
-- Power BI: https://docs.microsoft.com/power-bi
-
-**Contacto:**
-- Email: soporte@banreservas.com
-- Repositorio: [URL del repositorio]
-- Issues: [URL]/issues
-
----
-
-## 12. Anexos
-
-### 12.1 Script Completo de Base de Datos
+### 9.1 Script Completo de Base de Datos
 
 **Archivo:** `db/init.sql`
 
@@ -1835,7 +1325,7 @@ Contiene:
 - Stored procedures
 - Funciones auxiliares
 
-### 12.2 Diagrama de Flujo del ETL
+### 9.2 Diagrama de Flujo del ETL
 
 ```
 ┌─────────────┐
@@ -1894,7 +1384,7 @@ Contiene:
 └─────────────┘
 ```
 
-### 12.3 Ejemplo de Datos de Prueba
+### 9.3 Ejemplo de Datos de Prueba
 
 **Archivo:** `db/seeders/seed.sql`
 
@@ -1906,7 +1396,7 @@ Contiene:
 - 3 roles
 - 2 usuarios de prueba
 
-### 12.4 Variables de Entorno Completas
+### 9.4 Variables de Entorno Completas
 
 ```env
 # ===========================================
@@ -1972,7 +1462,7 @@ SMTP_PASSWORD=your-app-password
 SMTP_FROM=noreply@banreservas.com
 ```
 
-### 12.5 Comandos Útiles
+### 9.5 Comandos Útiles
 
 ```bash
 # Instalación
@@ -2013,7 +1503,7 @@ rm -rf node_modules dist
 npm install
 ```
 
-### 12.6 Glosario de Términos
+### 9.6 Glosario de Términos
 
 | Término | Definición |
 |---------|-----------|
@@ -2028,38 +1518,17 @@ npm install
 | **Endpoint** | Punto de acceso de la API |
 | **Middleware** | Componente intermedio que procesa peticiones |
 
-### 12.7 Referencias y Recursos Adicionales
 
-**Documentación Técnica:**
-- [NestJS Documentation](https://docs.nestjs.com)
-- [TypeORM Documentation](https://typeorm.io)
-- [PostgreSQL Documentation](https://docs.microsoft.com/sql)
-- [Power BI Documentation](https://docs.microsoft.com/power-bi)
-
-**Tutoriales:**
-- [Building REST APIs with NestJS](https://www.youtube.com/nestjs-tutorial)
-- [PostgreSQL Basics](https://www.sqlservertutorial.net)
-- [Power BI for Beginners](https://powerbi.microsoft.com/learning)
-
-**Herramientas Recomendadas:**
-- [Postman](https://www.postman.com) - Pruebas de API
-- [DBeaver](https://dbeaver.io) - Cliente SQL multiplataforma
-- [VS Code](https://code.visualstudio.com) - Editor de código
-- [Git](https://git-scm.com) - Control de versiones
-
-### 12.8 Licencia
-
-Este proyecto es propiedad de Banco de Reservas de la República Dominicana.
 
 **Uso interno únicamente.**
 
 ---
 
-## 13. Conclusión
+## 10. Conclusión
 
 Este manual proporciona toda la información necesaria para instalar, configurar y utilizar el sistema CRM de Banco de Reservas. 
 
-### 13.1 Resumen de la Solución
+### 10.1 Resumen de la Solución
 
  **Parte 1:** Consulta SQL implementada en stored procedure `sp_ObtenerProductividadEjecutivos`
 
@@ -2071,26 +1540,17 @@ Este manual proporciona toda la información necesaria para instalar, configurar
 
  **Parte 5:** Dashboard Power BI con 4 páginas de análisis interactivo
 
-### 13.2 Próximos Pasos
 
-Para poner en producción:
-1. Cambiar todas las contraseñas y secrets
-2. Configurar SSL/HTTPS
-3. Implementar backups automáticos
-4. Configurar monitoreo y alertas
-5. Realizar pruebas de carga
-6. Documentar procedimientos operativos
 
-### 13.3 Soporte
+### 13.3 Duda:
 
 Para cualquier pregunta o problema:
-- 📧 Email: soporte-crm@banreservas.com
-- 📱 Teléfono: +1 (809) 555-1234
-- 🌐 Portal: https://soporte.banreservas.com
+- Email: manuelmaldonado2898@gmail.com
+
 
 ---
 
 **Fin del Manual de Usuario**
 
 *Versión 1.0 - Octubre 2025*  
-*© 2025 Banco de Reservas de la República Dominicana*
+*© 2025 Prueba Tecnica | Banco de Reservas de la República Dominicana*
