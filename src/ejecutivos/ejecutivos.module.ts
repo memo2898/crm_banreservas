@@ -8,6 +8,5 @@ import { Ejecutivo } from './entities/ejecutivo.entity';
   imports: [TypeOrmModule.forFeature([Ejecutivo])],
   controllers: [EjecutivosController],
   providers: [EjecutivosService],
-
 })
 export class EjecutivosModule {}

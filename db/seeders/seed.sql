@@ -1,10 +1,4 @@
 -- ========= SEEDERS PARA CRM BANCO DE RESERVAS =========
--- Limpiar datos existentes (opcional, comentar en producción)
--- TRUNCATE TABLE crm_banco.ventas CASCADE;
--- TRUNCATE TABLE crm_banco.visitas CASCADE;
--- TRUNCATE TABLE crm_banco.clientes CASCADE;
--- TRUNCATE TABLE crm_banco.ejecutivos CASCADE;
--- TRUNCATE TABLE crm_banco.usuarios CASCADE;
 
 -- ========= INSERTAR EJECUTIVOS =========
 INSERT INTO crm_banco.ejecutivos (nombre, apellido, agregado_por, estado) VALUES
@@ -24,46 +18,47 @@ INSERT INTO crm_banco.ejecutivos (nombre, apellido, agregado_por, estado) VALUES
 ('Daniela María', 'Silva', 'sistema', 'activo'),
 ('José Manuel', 'Reyes', 'sistema', 'activo');
 
--- ========= INSERTAR CLIENTES =========
-INSERT INTO crm_banco.clientes (nombre, apellido, direccion, telefono, agregado_por, estado) VALUES
--- Clientes Corporativos/Empresariales
-('Grupo Industrial', 'Dominicano SA', 'Av. Winston Churchill 1099, Torre Citigroup', '809-555-0101', 'sistema', 'activo'),
-('Constructora', 'Del Este SRL', 'Av. Abraham Lincoln 1003, Piantini', '809-555-0102', 'sistema', 'activo'),
-('Importadora', 'Caribe SA', 'Av. 27 de Febrero 421, Naco', '809-555-0103', 'sistema', 'activo'),
-('Distribuidora', 'Nacional SRL', 'Av. Sarasota 39, Bella Vista', '809-555-0104', 'sistema', 'activo'),
-('Tecnología', 'Avanzada SA', 'Av. Gustavo Mejía Ricart 102, Ensanche Julieta', '809-555-0105', 'sistema', 'activo'),
-('Farmacia', 'Central SRL', 'Av. Independencia 2253, Gazcue', '809-555-0106', 'sistema', 'activo'),
-('Supermercados', 'Unidos SA', 'Av. John F. Kennedy Km 5½', '809-555-0107', 'sistema', 'activo'),
-('Textiles', 'Del Sur SRL', 'Av. Máximo Gómez 72, Villa Juana', '809-555-0108', 'sistema', 'activo'),
-('Agroindustrial', 'Dominicana SA', 'Av. Los Próceres, Arroyo Hondo', '809-555-0109', 'sistema', 'activo'),
-('Hotelera', 'Del Caribe SA', 'Av. George Washington 500, Malecón', '809-555-0110', 'sistema', 'activo'),
+
+
+-- ========= INSERTAR TIPOS DE DOCUMENTOS =========
+INSERT INTO crm_banco.tipo_documentos (nombre_documento, descripcion, agregado_por, estado) VALUES
+('CED', 'Documento nacional de identidad', 'sistema', 'activo'),
+('PAS', 'Documento de viaje internacional', 'sistema', 'activo'),
+('RNC', 'Registro Nacional de Contribuyentes para empresas', 'sistema', 'activo');
+
+-- ========= INSERTAR CLIENTES CON TIPO DE DOCUMENTO =========
+INSERT INTO crm_banco.clientes (nombre, apellido, id_tipo_documento, documento, direccion, telefono, agregado_por, estado) VALUES
+-- Clientes Corporativos/Empresariales (usamos RNC)
+('Grupo Industrial', 'Dominicano SA', 3, '131234567', 'Av. Winston Churchill 1099, Torre Citigroup', '809-555-0101', 'sistema', 'activo'),
+('Constructora', 'Del Este SRL', 3, '131234568', 'Av. Abraham Lincoln 1003, Piantini', '809-555-0102', 'sistema', 'activo'),
+('Importadora', 'Caribe SA', 3, '131234569', 'Av. 27 de Febrero 421, Naco', '809-555-0103', 'sistema', 'activo'),
+('Distribuidora', 'Nacional SRL', 3, '131234570', 'Av. Sarasota 39, Bella Vista', '809-555-0104', 'sistema', 'activo'),
+('Tecnología', 'Avanzada SA', 3, '131234571', 'Av. Gustavo Mejía Ricart 102, Ensanche Julieta', '809-555-0105', 'sistema', 'activo'),
 
 -- Clientes Personas Físicas
-('Rafael', 'Estrella Pérez', 'C/ El Conde 203, Zona Colonial', '809-555-0201', 'sistema', 'activo'),
-('Cristina', 'Marte González', 'Av. Roberto Pastoriza 420, Naco', '809-555-0202', 'sistema', 'activo'),
-('Fernando', 'Báez Rodríguez', 'C/ José Contreras 85, Gazcue', '809-555-0203', 'sistema', 'activo'),
-('Lucía', 'Vásquez Díaz', 'Av. Anacaona 101, Bella Vista', '809-555-0204', 'sistema', 'activo'),
-('Alberto', 'Mejía Santos', 'Av. Núñez de Cáceres 303, El Millón', '809-555-0205', 'sistema', 'activo'),
-('Sandra', 'Peña Martínez', 'C/ Caonabo 33, Gascue', '809-555-0206', 'sistema', 'activo'),
-('Diego', 'Hernández López', 'Av. Rómulo Betancourt 1512, Bella Vista', '809-555-0207', 'sistema', 'activo'),
-('Valentina', 'Acosta Méndez', 'Av. Tiradentes 14, Naco', '809-555-0208', 'sistema', 'activo'),
-('Andrés', 'Guerrero Pérez', 'C/ Santiago 153, Gazcue', '809-555-0209', 'sistema', 'activo'),
-('Carolina', 'Rosario Gil', 'Av. Abraham Lincoln 605, Piantini', '809-555-0210', 'sistema', 'activo'),
-('Manuel', 'Cabrera Torres', 'Av. Las Américas Km 11, Santo Domingo Este', '809-555-0211', 'sistema', 'activo'),
-('Isabella', 'Polanco Cruz', 'C/ Paseo de los Locutores 31, Piantini', '809-555-0212', 'sistema', 'activo'),
-('Alejandro', 'Medina Vargas', 'Av. España 65, Villa Duarte', '809-555-0213', 'sistema', 'activo'),
-('Gabriela', 'Santana Ruiz', 'C/ Arzobispo Meriño 302, Zona Colonial', '809-555-0214', 'sistema', 'activo'),
-('Ricardo', 'Castillo Matos', 'Av. Bolívar 507, Gazcue', '809-555-0215', 'sistema', 'activo'),
-('Natalia', 'Fernández Ramos', 'Av. Francia 125, Gazcue', '809-555-0216', 'sistema', 'activo'),
-('Sebastián', 'Rivera Álvarez', 'C/ Luis F. Thomen 110, Evaristo Morales', '809-555-0217', 'sistema', 'activo'),
-('Victoria', 'Guzmán Espinal', 'Av. Lope de Vega 29, Naco', '809-555-0218', 'sistema', 'activo'),
-('Eduardo', 'Domínguez Soto', 'C/ César Nicolás Penson 70, Gazcue', '809-555-0219', 'sistema', 'activo'),
-('Camila', 'Pimentel Ortiz', 'Av. 27 de Febrero 247, El Vergel', '809-555-0220', 'sistema', 'activo'),
-('Jorge', 'Valdez Luna', 'C/ Mercedes 505, Zona Colonial', '809-555-0221', 'sistema', 'activo'),
-('Mariana', 'Cuevas Brito', 'Av. Mirador Sur 8, Mirador Sur', '809-555-0222', 'sistema', 'activo'),
-('Pablo', 'Romero Félix', 'C/ Gustavo Mejía Ricart 74, Piantini', '809-555-0223', 'sistema', 'activo'),
-('Elena', 'Suárez Montero', 'Av. Pedro Henríquez Ureña 137, La Esperilla', '809-555-0224', 'sistema', 'activo'),
-('Rodrigo', 'Herrera Castro', 'C/ Fantino Falco 48, Naco', '809-555-0225', 'sistema', 'activo');
+('John', 'Smith', 2, 'P1234567', '123 Main St, New York, USA', '1-212-555-0101', 'sistema', 'activo'),
+('Rafael', 'Estrella Pérez', 1, '00123456789', 'C/ El Conde 203, Zona Colonial', '809-555-0201', 'sistema', 'activo'),
+
+('Fernando', 'Báez Rodríguez', 1, '00123456791', 'C/ José Contreras 85, Gazcue', '809-555-0203', 'sistema', 'activo'),
+('Lucía', 'Vásquez Díaz', 1, '00123456792', 'Av. Anacaona 101, Bella Vista', '809-555-0204', 'sistema', 'activo'),
+('Alberto', 'Mejía Santos', 1, '00123456793', 'Av. Núñez de Cáceres 303, El Millón', '809-555-0205', 'sistema', 'activo'),
+('Noah', 'Jones', 2, 'P5678901', '654 Maple St, Berlin, Germany', '49-30-555-0105', 'sistema', 'activo'),
+
+('Emma', 'Johnson', 2, 'P2345678', '456 Elm St, London, UK', '44-20-555-0102', 'sistema', 'activo'),
+('Liam', 'Williams', 2, 'P3456789', '789 Oak St, Toronto, Canada', '1-416-555-0103', 'sistema', 'activo'),
+('Cristina', 'Marte González', 1, '00123456790', 'Av. Roberto Pastoriza 420, Naco', '809-555-0202', 'sistema', 'activo'),
+('Olivia', 'Brown', 2, 'P4567890', '321 Pine St, Sydney, Australia', '61-2-555-0104', 'sistema', 'activo'),
+
+('Ava', 'Garcia', 2, 'P6789012', '987 Cedar St, Madrid, Spain', '34-91-555-0106', 'sistema', 'activo'),
+('Ethan', 'Martinez', 2, 'P7890123', '135 Spruce St, Mexico City, Mexico', '52-55-555-0107', 'sistema', 'activo'),
+('Sophia', 'Rodriguez', 2, 'P8901234', '246 Birch St, Buenos Aires, Argentina', '54-11-555-0108', 'sistema', 'activo'),
+('Mason', 'Lopez', 2, 'P9012345', '357 Walnut St, Lima, Peru', '51-1-555-0109', 'sistema', 'activo'),
+('Isabella', 'Gonzalez', 2, 'P0123456', '468 Chestnut St, Santiago, Chile', '56-2-555-0110', 'sistema', 'activo');
+
+
+
+
+
 
 -- ========= INSERTAR USUARIOS (vinculados a ejecutivos) =========
 -- Generar passwords hash de ejemplo (en producción usar bcrypt real)

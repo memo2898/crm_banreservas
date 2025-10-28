@@ -1,36 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsDateString } from 'class-validator';
 
-export class CreateClienteDto {
+export class CreateTipoDocumentoDto {
   @ApiProperty({ example: "put some text here" })
   @IsNotEmpty()
   @IsString()
-  nombre: string;
-
-  @ApiProperty({ example: "put some text here" })
-  @IsNotEmpty()
-  @IsString()
-  apellido: string;
-
-  @ApiProperty({ example: 12345 })
-  @IsOptional()
-  @IsNumber()
-  id_tipo_documento?: number;
+  nombre_documento: string;
 
   @ApiProperty({ example: "put some text here" })
   @IsOptional()
   @IsString()
-  documento?: string;
-
-  @ApiProperty({ example: "put some text here" })
-  @IsOptional()
-  @IsString()
-  direccion?: string;
-
-  @ApiProperty({ example: "put some text here" })
-  @IsOptional()
-  @IsString()
-  telefono?: string;
+  descripcion?: string;
 
   @ApiProperty({ example: "put some text here" })
   @IsOptional()

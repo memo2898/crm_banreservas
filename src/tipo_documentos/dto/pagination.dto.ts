@@ -36,7 +36,7 @@ export class PaginationDto {
   sort?: string;
 }
 
-export class ClienteFiltersDto extends PaginationDto {
+export class TipoDocumentoFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 1, 
@@ -49,52 +49,19 @@ export class ClienteFiltersDto extends PaginationDto {
 
   @ApiPropertyOptional({ 
     example: 'ejemplo', 
-    description: 'Filtrar por nombre (búsqueda parcial)' 
+    description: 'Filtrar por nombre_documento (búsqueda parcial)' 
   })
   @IsOptional()
   @IsString()
-  nombre?: string;
+  nombre_documento?: string;
 
   @ApiPropertyOptional({ 
-    example: 'valor ejemplo', 
-    description: 'Filtrar por apellido (búsqueda parcial)' 
+    example: 'descripción ejemplo', 
+    description: 'Filtrar por descripcion (búsqueda parcial)' 
   })
   @IsOptional()
   @IsString()
-  apellido?: string;
-
-  @ApiPropertyOptional({ 
-    example: 1, 
-    description: 'Filtrar por id_tipo_documento' 
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  id_tipo_documento?: number;
-
-  @ApiPropertyOptional({ 
-    example: 'valor ejemplo', 
-    description: 'Filtrar por documento (búsqueda parcial)' 
-  })
-  @IsOptional()
-  @IsString()
-  documento?: string;
-
-  @ApiPropertyOptional({ 
-    example: 'Calle Ejemplo 123', 
-    description: 'Filtrar por direccion (búsqueda parcial)' 
-  })
-  @IsOptional()
-  @IsString()
-  direccion?: string;
-
-  @ApiPropertyOptional({ 
-    example: '123-456-7890', 
-    description: 'Filtrar por telefono (búsqueda parcial)' 
-  })
-  @IsOptional()
-  @IsString()
-  telefono?: string;
+  descripcion?: string;
 
   @ApiPropertyOptional({ 
     example: 'valor ejemplo', 

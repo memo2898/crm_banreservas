@@ -9,7 +9,8 @@ import { VisitasModule } from './visitas/visitas.module';
 import { VentasModule } from './ventas/ventas.module';
 import { ProductividadModule } from './productividad/productividad.module';
 import { EtlModule } from './etl/etl.module';
-
+import { TipoDocumentosModule } from './tipo_documentos/tipo_documentos.module';
+import { ReportesModule } from './reportes/reportes.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +37,8 @@ import { EtlModule } from './etl/etl.module';
     VentasModule,
     ProductividadModule,
     EtlModule,
+    TipoDocumentosModule,
+    ReportesModule,
   ],
   controllers: [],
   providers: [],

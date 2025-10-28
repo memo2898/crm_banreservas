@@ -58,7 +58,7 @@ async function bootstrap() {
       defaultModelsExpandDepth: 1,
       defaultModelExpandDepth: 1,
     },
-    customSiteTitle: 'API REST - Documentación',
+    customSiteTitle: 'API REST CRM Prueba Tecnica',
     customfavIcon: '/favicon.ico',
     customCss: `
       .swagger-ui .topbar { display: none }

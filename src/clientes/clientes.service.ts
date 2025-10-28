@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { ClienteFiltersDto } from './dto/pagination.dto';
+import { ClienteFiltersDto, PaginationDto } from './dto/pagination.dto';
 import { Cliente } from './entities/cliente.entity';
 import { PaginationResponse } from './interfaces/pagination-response.interface';
 
@@ -79,9 +79,7 @@ export class ClientesService {
   // Actualizar un registro
   async update(id: number, updateClientesDto: UpdateClienteDto) {
     try {
-      const existingRecord = await this.clientesRepository.findOne({
-        where: { id },
-      });
+      const existingRecord = await this.clientesRepository.findOne({ where: { id } });
       if (!existingRecord) {
         throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
       }
@@ -102,9 +100,7 @@ export class ClientesService {
   // Eliminar un registro
   async remove(id: number) {
     try {
-      const existingRecord = await this.clientesRepository.findOne({
-        where: { id },
-      });
+      const existingRecord = await this.clientesRepository.findOne({ where: { id } });
       if (!existingRecord) {
         throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
       }
@@ -115,33 +111,7 @@ export class ClientesService {
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new HttpException(
-        `Error al eliminar el registro: ${this.getErrorMessage(error)}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async remove_soft(id: number) {
-    try {
-      const existingRecord = await this.clientesRepository.findOne({
-        where: { id },
-      });
-      if (!existingRecord) {
-        throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
-      }
-
-      await this.clientesRepository.update(id, {
-        estado: 'deleted',
-      });
-      return {
-        message: `Clientes con ID ${id} eliminado correctamente`,
-      };
-    } catch (error: unknown) {
-      if (error instanceof NotFoundException) {
-        throw error;
+        throw error; // Re-lanzar NotFoundException sin modificar
       }
       throw new HttpException(
         `Error al eliminar el registro: ${this.getErrorMessage(error)}`,
@@ -151,19 +121,40 @@ export class ClientesService {
   }
 
   //? Métodos findBy para Foreign Keys:
+    // Obtener registros por id_tipo_documento (método original - para compatibilidad)
+  async findByIdTipoDocumento(idTipoDocumento: number) {
+    try {
+      const records = await this.clientesRepository.find({ 
+        where: { id_tipo_documento: idTipoDocumento },
+        //order: { created_at: 'DESC' }
+      });
+      
+      if (!records || records.length === 0) {
+        return [];
+      }
+      
+      return records;
+    } catch (error: unknown) {
+      throw new HttpException(
+        `Error al obtener los registros por id_tipo_documento: ${this.getErrorMessage(error)}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+
 
   //? Filtrado paginado:
 
   // Obtener todos los registros con paginación y filtros
   async findAllPaginated(
-    filters: ClienteFiltersDto,
+    filters: ClienteFiltersDto
   ): Promise<PaginationResponse<Cliente>> {
     try {
       const { page = 1, limit = 10, sort, ...filterParams } = filters;
 
       // Crear query builder
-      const queryBuilder =
-        this.clientesRepository.createQueryBuilder('cliente');
+      const queryBuilder = this.clientesRepository.createQueryBuilder('cliente');
 
       // Aplicar filtros
       this.applyFilters(queryBuilder, filterParams);
@@ -204,11 +195,59 @@ export class ClientesService {
     }
   }
 
+    // Obtener registros por id_tipo_documento con paginación
+  async findIdTipoDocumentoPaginated(
+    idTipoDocumento: number,
+    pagination: PaginationDto
+  ): Promise<PaginationResponse<Cliente>> {
+    try {
+      const { page = 1, limit = 10, sort } = pagination;
+
+      const queryBuilder = this.clientesRepository
+        .createQueryBuilder('cliente')
+        .where('cliente.id_tipo_documento = :idTipoDocumento', { idTipoDocumento });
+
+      // Aplicar ordenamiento
+      this.applySorting(queryBuilder, sort);
+
+      const offset = (page - 1) * limit;
+
+      const [data, total] = await queryBuilder
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
+
+      const totalPages = Math.ceil(total / limit);
+      const hasNext = page < totalPages;
+      const hasPrev = page > 1;
+
+      return {
+        data,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages,
+          hasNext,
+          hasPrev,
+        },
+      };
+    } catch (error: unknown) {
+      throw new HttpException(
+        `Error al obtener los registros por id_tipo_documento: ${this.getErrorMessage(error)}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+
+
   // Método helper para aplicar filtros
   private applyFilters(
     queryBuilder: SelectQueryBuilder<Cliente>,
-    filters: Partial<ClienteFiltersDto>,
+    filters: Partial<ClienteFiltersDto>
   ) {
+    
     // Filtro por ID específico
     if (filters.id) {
       queryBuilder.andWhere('cliente.id = :id', {
@@ -227,6 +266,20 @@ export class ClientesService {
     if (filters.apellido) {
       queryBuilder.andWhere('cliente.apellido ILIKE :apellido', {
         apellido: `%${filters.apellido}%`,
+      });
+    }
+
+    // Filtro por id_tipo_documento
+    if (filters.id_tipo_documento) {
+      queryBuilder.andWhere('cliente.id_tipo_documento = :id_tipo_documento', {
+        id_tipo_documento: filters.id_tipo_documento,
+      });
+    }
+
+    // Filtro por documento (búsqueda parcial)
+    if (filters.documento) {
+      queryBuilder.andWhere('cliente.documento ILIKE :documento', {
+        documento: `%${filters.documento}%`,
       });
     }
 
@@ -278,26 +331,26 @@ export class ClientesService {
         estado: `%${filters.estado}%`,
       });
     }
+
   }
 
   // Método helper para aplicar ordenamiento
-  private applySorting(
-    queryBuilder: SelectQueryBuilder<Cliente>,
-    sort?: string,
-  ) {
+  private applySorting(queryBuilder: SelectQueryBuilder<Cliente>, sort?: string) {
     if (sort) {
       const [field, direction] = sort.split(':');
       const validFields = [
-        'id',
+                'id',
         'nombre',
         'apellido',
+        'id_tipo_documento',
+        'documento',
         'direccion',
         'telefono',
         'agregado_por',
         'agregado_en',
         'actualizado_por',
         'actualizado_en',
-        'estado',
+        'estado'
       ];
 
       if (
@@ -306,7 +359,7 @@ export class ClientesService {
       ) {
         queryBuilder.orderBy(
           `cliente.${field}`,
-          direction.toUpperCase() as 'ASC' | 'DESC',
+          direction.toUpperCase() as 'ASC' | 'DESC'
         );
       } else {
         // Ordenamiento por defecto

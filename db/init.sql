@@ -47,17 +47,32 @@ CREATE TABLE IF NOT EXISTS crm_banco.ejecutivos (
     estado VARCHAR(20) DEFAULT 'activo'
 );
 
+CREATE TABLE IF NOT EXISTS crm_banco.tipo_documentos (
+    id SERIAL PRIMARY KEY,
+    nombre_documento VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT,
+    agregado_por VARCHAR(100),
+    agregado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_por VARCHAR(100),
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
 CREATE TABLE IF NOT EXISTS crm_banco.clientes (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
+    id_tipo_documento INTEGER,
+    documento VARCHAR(50),
     direccion TEXT,
     telefono VARCHAR(20),
     agregado_por VARCHAR(100),
     agregado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     actualizado_por VARCHAR(100),
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estado VARCHAR(20) DEFAULT 'activo'
+    estado VARCHAR(20) DEFAULT 'activo',
+    CONSTRAINT fk_cliente_tipo_documento FOREIGN KEY (id_tipo_documento) 
+        REFERENCES crm_banco.tipo_documentos(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS crm_banco.visitas (
@@ -92,6 +107,11 @@ CREATE TABLE IF NOT EXISTS crm_banco.ventas (
         REFERENCES crm_banco.clientes(id) ON DELETE RESTRICT,
     CONSTRAINT chk_monto_positivo CHECK (monto > 0)
 );
+
+
+
+
+
 
 -- ========= CONFIGURACIÓN ADICIONAL =========
 -- Crear índices para mejorar el rendimiento
@@ -145,3 +165,7 @@ CREATE TRIGGER trg_actualizar_timestamp_roles
     BEFORE UPDATE ON crm_banco.roles
     FOR EACH ROW EXECUTE FUNCTION crm_banco.fn_actualizar_timestamp();
 
+
+CREATE TRIGGER trg_actualizar_timestamp_tipo_documentos
+    BEFORE UPDATE ON crm_banco.tipo_documentos
+    FOR EACH ROW EXECUTE FUNCTION crm_banco.fn_actualizar_timestamp();
