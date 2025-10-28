@@ -743,20 +743,25 @@ Estos archivos ya están listos para ser cargados en el sistema.
 #### 6.2.1 Estructura Requerida
 
 ```csv
-IdCliente,FechaVenta,Monto,Producto
-1,2024-10-15,45000.50,Tarjeta de Crédito
-2,2024-10-16,120000.00,Préstamo Personal
-3,2024-10-17,85000.75,Cuenta de Ahorro
+id_transaccion,nombre,apellido,tipo_documento,documento,fecha_venta,monto,producto
+TX1001,Diego,Rojas,CED,00123456789,2025-11-15,5386.2,PrestamoPersonal
+TX1002,AgroindustrialSantaMaria,,RNC,402123457,2025-11-15,4712.48,CuentaAhorro
+TX1003,Ana,Gomez,CED,00123456791,2025-11-05,1891.06,CuentaCorriente
 ```
 
 #### 6.2.2 Especificaciones
 
-| Campo | Tipo | Obligatorio | Validaciones |
-|-------|------|-------------|--------------|
-| IdCliente | Entero | Sí | Debe existir en tabla Clientes |
-| FechaVenta | Fecha | Sí | Formato: YYYY-MM-DD, no futuras |
-| Monto | Decimal | Sí | Mayor a 0 |
-| Producto | Texto | Sí | Máximo 100 caracteres |
+| Campo              | Tipo    | Obligatorio | Validaciones                                                        |
+| ------------------ | ------- | ----------- | ------------------------------------------------------------------- |
+| **id_transaccion** | Texto   |  Sí        | Único, prefijo `"TX"` seguido de número correlativo (ej. `TX1001`)  |
+| **nombre**         | Texto   |  Sí        | No vacío, solo letras                                               |
+| **apellido**       | Texto   |  Sí        | No vacío, solo letras (si aplica; si es empresa puede quedar vacío) |
+| **tipo_documento** | Texto   |  Sí        | Valores permitidos: `CED`, `RNC`, `PAS`                             |
+| **documento**      | Texto   |  Sí        | Numérico, longitud adecuada según tipo de documento                 |
+| **fecha_venta**    | Fecha   |  Sí        | Formato `YYYY-MM-DD`, no puede ser una fecha futura                 |
+| **monto**          | Decimal |  Sí        | Mayor que 0                                                         |
+| **producto**       | Texto   |  Sí        | Máximo 100 caracteres                                               |
+
 
 ### 6.3 Ejecutar el Proceso ETL
 
@@ -779,7 +784,8 @@ Si deseas usar tu propio archivo:
 **Método 1: Usando Postman**
 
 ```
-POST http://localhost:3000/etl/cargar-ventas
+POST http://localhost:3002/api/etl/ventas/upload
+
 Content-Type: multipart/form-data
 
 Cuerpo:
@@ -792,12 +798,12 @@ Puedes usar cualquiera de los dos archivos CSV disponibles:
 
 ```bash
 # Opción 1: Usando el primer archivo CSV
-curl -X POST http://localhost:3000/etl/cargar-ventas \
+curl -X POST http://localhost:3002/api/etl/ventas/upload \
   -H "Authorization: Bearer TU_TOKEN_JWT" \
   -F "file=@excel_csv/ventas_otro_sistema.csv"
 
 # Opción 2: Usando el segundo archivo CSV
-curl -X POST http://localhost:3000/etl/cargar-ventas \
+curl -X POST http://localhost:3002/api/etl/ventas/upload \
   -H "Authorization: Bearer TU_TOKEN_JWT" \
   -F "file=@excel_csv/ventas_otro_sistema_2.csv"
 ```
@@ -805,7 +811,7 @@ curl -X POST http://localhost:3000/etl/cargar-ventas \
 **Método 3: Usando la Documentación Swagger**
 
 1. Abre: `http://localhost:3000/api`
-2. Navega a: `ETL > POST /etl/cargar-ventas`
+2. Navega a: `ETL > POST /api/etl/ventas/upload`
 3. Click en "Try it out"
 4. Selecciona tu archivo CSV
 5. Click en "Execute"
@@ -816,43 +822,28 @@ curl -X POST http://localhost:3000/etl/cargar-ventas \
 
 ```json
 {
-  "success": true,
-  "message": "Proceso ETL completado exitosamente",
-  "data": {
-    "registrosProcesados": 150,
-    "registrosInsertados": 145,
-    "registrosDuplicados": 3,
-    "registrosConError": 2,
-    "duracionMs": 1245
-  },
+  "total_registros": 28,
+  "exitosos": 26,
+  "fallidos": 2,
+  "clientes_creados": 20,
+  "clientes_actualizados": 6,
+  "ventas_creadas": 26,
   "errores": [
     {
-      "fila": 23,
-      "campo": "IdCliente",
-      "valor": "999",
-      "error": "Cliente no existe en la base de datos"
-    },
-    {
-      "fila": 87,
-      "campo": "Monto",
-      "valor": "-500",
-      "error": "El monto debe ser mayor a 0"
+      "fila": 0,
+      "id_transaccion": "string",
+      "error": "string"
     }
-  ]
+  ],
+  "tiempo_procesamiento_ms": 1234
 }
 ```
 
 #### 6.4.2 Carga con Errores
 
-Si hay errores críticos, la transacción se revierte completamente:
+Si hay errores críticos, la transacción NO GUARDARÁ:
 
-```json
-{
-  "success": false,
-  "message": "Error en el proceso ETL: Formato de archivo inválido",
-  "error": "El archivo debe contener las columnas: IdCliente, FechaVenta, Monto, Producto"
-}
-```
+
 
 ### 6.5 Validaciones Implementadas
 
@@ -862,47 +853,7 @@ Si hay errores críticos, la transacción se revierte completamente:
 -  Debe contener las columnas requeridas
 -  Tamaño máximo: 5 MB
 
-#### 6.5.2 Validaciones de Datos
 
--  **IdCliente:** Debe existir en la tabla Clientes
--  **FechaVenta:** 
-  - Formato válido (YYYY-MM-DD)
-  - No puede ser fecha futura
-  - No puede ser anterior al año 2000
--  **Monto:** 
-  - Debe ser numérico
-  - Mayor a 0
-  - Máximo 2 decimales
--  **Producto:** 
-  - No puede estar vacío
-  - Máximo 100 caracteres
-
-#### 6.5.3 Validaciones de Duplicados
-
-```sql
--- Se considera duplicado si existe un registro con:
--- - Mismo IdCliente
--- - Misma FechaVenta
--- - Mismo Monto
--- - Mismo Producto
-```
-
-### 6.6 Logs y Auditoría
-
-Cada ejecución del ETL se registra en:
-
-**Base de Datos:**
-```sql
-SELECT * FROM LogsETL 
-ORDER BY FechaEjecucion DESC;
-```
-
-**Archivos de Log:** (si configurado)
-```
-logs/etl_2024-10-27_14-30-00.log
-```
-
----
 
 ## 7. Parte 3: Reportes y KPIs
 
